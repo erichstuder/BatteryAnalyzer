@@ -1,0 +1,66 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Transistor_FET:IRLB8721PBF Q?
+U 1 1 5F455618
+P 8300 3250
+F 0 "Q?" H 8506 3296 50  0000 L CNN
+F 1 "IRLB8721PBF" H 8506 3205 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 8550 3175 50  0001 L CIN
+F 3 "http://www.infineon.com/dgdl/irlb8721pbf.pdf?fileId=5546d462533600a40153566056732591" H 8300 3250 50  0001 L CNN
+	1    8300 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDREF #PWR?
+U 1 1 5F45C8C8
+P 8400 4100
+F 0 "#PWR?" H 8400 3850 50  0001 C CNN
+F 1 "GNDREF" H 8405 3927 50  0000 C CNN
+F 2 "" H 8400 4100 50  0001 C CNN
+F 3 "" H 8400 4100 50  0001 C CNN
+	1    8400 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F45E28A
+P 7800 3250
+F 0 "R?" H 7870 3296 50  0000 L CNN
+F 1 "0.1" H 7870 3205 50  0000 L CNN
+F 2 "" V 7730 3250 50  0001 C CNN
+F 3 "~" H 7800 3250 50  0001 C CNN
+	1    7800 3250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7950 3250 8100 3250
+Wire Wire Line
+	8400 4100 8400 3900
+Wire Wire Line
+	8400 3450 8400 3600
+$Comp
+L Device:R R?
+U 1 1 5F456F94
+P 8400 3750
+F 0 "R?" H 8470 3796 50  0000 L CNN
+F 1 "0.1" H 8470 3705 50  0000 L CNN
+F 2 "" V 8330 3750 50  0001 C CNN
+F 3 "~" H 8400 3750 50  0001 C CNN
+	1    8400 3750
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
