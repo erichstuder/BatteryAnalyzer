@@ -25,14 +25,11 @@ plt.ion()
 plt.figure(1)
 #plt.style.use('dark_background')
 mag, phase, w = bode(g, dB=True, Hz=True)
-plt.show()
 
 plt.figure(2)
+plt.grid()
 for sys in g:
 	t,y = step_response(sys, np.arange(0, 0.1, 1e-4))
 	plt.plot(t, y)
-
-plt.grid()
-plt.show()
 
 input("press enter to exit ...")
