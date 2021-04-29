@@ -1,26 +1,38 @@
-from control.matlab import *
+from RcFilter import RcFilter
+from control import bode
+from control import step_response
+from control import freqresp
+from scipy.optimize import root_scalar
 import matplotlib.pyplot as plt
+from math import pi
+import numpy as np
 
-# The PWM frequency is 980Hz (about 6157 rad/s)
-# The damping at this frequency shall be at least 30dB (factor 1000)
+def myFunc(R, C, nrOfStages):
+	g = RcFilter.getCoupled(R=R, C=C, nrOfStages=nrOfStages)
+	mag, phase, w = freqresp(g, 2*pi*980)
+	return mag - 1e-3
 
-T1 = 1/800  #1/6
+g = []
+for n in range(1, 5):
+	R=68e3
+	result = root_scalar(lambda C: myFunc(R=R, C=C, nrOfStages=n), bracket=[1e-10, 1e6], method='bisect')
+	g += [RcFilter.getCoupled(R=R, C=result.root, nrOfStages=n)]
+	print(result.root)
 
-s = tf('s')
 
-g = 1/(1+T1*s)
-
-mag, phase, w = bode(g*g*g, omega_limits=[10, 6157], dB=True, plot=False)
-#y, t = step(g)
 
 plt.ion()
-plt.style.use('dark_background')
-#plt.xlabel('Time [s]')
-#plt.ylabel('Amplitude')
-#plt.title('Step response for 1. Order Lowpass')
-plt.grid(linestyle='--')
-plt.loglog(w, mag)
-#plt.plot(w, phase)
-#plt.plot(t, y)
+plt.figure(1)
+#plt.style.use('dark_background')
+mag, phase, w = bode(g, dB=True, Hz=True)
+plt.show()
+
+plt.figure(2)
+for sys in g:
+	t,y = step_response(sys, np.arange(0, 0.1, 1e-4))
+	plt.plot(t, y)
+
+plt.grid()
+plt.show()
 
 input("press enter to exit ...")
