@@ -14,12 +14,10 @@ def myFunc(R, C, nrOfStages):
 
 g = []
 for n in range(1, 5):
-	R=68e3
-	result = root_scalar(lambda C: myFunc(R=R, C=C, nrOfStages=n), bracket=[1e-10, 1e6], method='bisect')
-	g += [RcFilter.getCoupled(R=R, C=result.root, nrOfStages=n)]
+	C=100e-9
+	result = root_scalar(lambda R: myFunc(R=R, C=C, nrOfStages=n), bracket=[1, 1e10], method='bisect')
+	g += [RcFilter.getCoupled(R=result.root, C=C, nrOfStages=n)]
 	print(result.root)
-
-
 
 plt.ion()
 plt.figure(1)
