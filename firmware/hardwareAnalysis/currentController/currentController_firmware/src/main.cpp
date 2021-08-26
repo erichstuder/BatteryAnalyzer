@@ -22,7 +22,7 @@ static ItSignal_t itSignals[] = {
 	{
 		"Ki",
 		ItValueType_Float,
-		NULL,
+		(void (*)(void)) currentController_getIGain,
 		(void (*)(void)) currentController_setIGain,
 	},
 };
