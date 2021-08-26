@@ -1,5 +1,5 @@
 """
-IT - Internal Tracer
+Battery Analyzer
 Copyright (C) 2019 Erich Studer
 
 This program is free software: you can redistribute it and/or modify
@@ -16,78 +16,30 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import matplotlib.pyplot as plt
-import numpy as np
-import time
-import os
-import array
 import sys
+import copy
 
-if __name__ == "__main__":
-	sys.path.append(os.path.abspath(os.path.join("../..")))
-	from IT_Client.helpers.TelegramParser import TelegramParser
+sys.path.append('../../IT_Client-0')
+from helpers.TelegramHandler import TelegramHandler
+from helpers.TelegramPlotter import TelegramPlotter
 
+print("Starting up, may take a few seconds ...")
 
-	if sys.platform.startswith("win"):
-		os.system('mode 70,15')
-		os.system("title LivePlot")
-	plt.ion()
-	plt.style.use('dark_background')
+myFile = sys.argv[1]
+telegramHandler = TelegramHandler(myFile)
+plotter = TelegramPlotter()
 
-	print("Starting up, may take a few seconds ...")
+while True:
+	telegram = telegramHandler.getLastValue('Ki')
+	if telegram is not None:
+		print(telegram['value'])
+		print('---')
 
-	timeWindow = 10e6
-
-	signals = [
-		{"name": "current", "lastTelegramTimestamp": 0, "data": [], "time": []},
-	]
-
-	myFile = sys.argv[1]
-	while not os.path.isfile(myFile):
-		pass
-
-	figure = plt.figure(num="ControllerSteps", figsize=(8, 4))
-
-	try:
-		while True:
-			with open(myFile, "rb") as sessionFile:
-				data = sessionFile.read()
-
-			plt.clf()
-
-			borderTimestamp = 0
-			telegrams = []
-
-			for signal in signals:
-				lastTelegram = TelegramParser.parseLastValidTypeValueTelegram(data, signal["name"])
-				if lastTelegram == None:
-					continue
-				lastTelegramTimestamp = lastTelegram["timestamp"]
-				borderTimestamp = max(signal["lastTelegramTimestamp"], lastTelegramTimestamp - timeWindow)
-				signal["lastTelegramTimestamp"] = lastTelegramTimestamp
-				telegrams = TelegramParser.getTypeValueTelegramsAfterTimestamp(data, signal["name"], borderTimestamp)
-
-				for telegram in telegrams:
-					if "value" in telegram and "timestamp" in telegram:
-						signal["data"] += [telegram["value"]]
-						signal["time"] += [telegram["timestamp"]]
-
-				for index in range(len(signal["time"])):
-					if signal["time"][index] > lastTelegramTimestamp - timeWindow:
-						del signal["data"][0:max(index-1,0)]
-						del signal["time"][0:max(index-1,0)]
-						break
-
-				timeSeconds = [x/1e6 for x in signal["time"]]
-				plt.step(timeSeconds, signal["data"], where="post")
-
-			#plt.legend(signalNames, loc="lower left")
-			plt.xlabel("time [s]")
-
-			plt.grid(linestyle="--")
-
-			figure.canvas.flush_events()
-	except Exception as e:
-		raise e
-		print(e)
-		print("good bye")
+	current = telegramHandler.getLastValues('current', 10e6)
+	pwm = telegramHandler.getLastValues('pwm', 10e6)
+	pwmCopy = copy.deepcopy(pwm)
+	for t in pwmCopy:
+		t['value'] = t['value'] / 100
+	plotter.plot(current)
+	plotter.plot(pwmCopy)
+	plotter.update()

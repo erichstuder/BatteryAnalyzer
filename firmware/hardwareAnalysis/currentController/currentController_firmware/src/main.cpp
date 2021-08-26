@@ -2,7 +2,7 @@
 
 #include "itHandler.h"
 #include "currentController.h"
-#include "cellCurrent.h"
+#include "currentMeasurement.h"
 
 static inline unsigned long getMicros(void);
 
@@ -10,20 +10,20 @@ static ItSignal_t itSignals[] = {
 	{
 		"current",
 		ItValueType_Float,
-		(void (*)(void)) getCellCurrent,
-		NULL
+		(void (*)(void)) currentMeasurement_getCurrent,
+		(void (*)(void)) currentController_setCurrent
 	},
 	{
 		"pwm",
 		ItValueType_Float,
-		(void (*)(void)) getControllerValue,
+		(void (*)(void)) currentController_getValue,
 		NULL
 	},
 	{
-		"i",
+		"Ki",
 		ItValueType_Float,
 		NULL,
-		(void (*)(void)) setCurrentController_gainI,
+		(void (*)(void)) currentController_setIGain,
 	},
 };
 
@@ -36,14 +36,11 @@ static const unsigned long SamplingTimeMicros = 0.01e6;
 static const uint8_t PwmPin = 10;
 
 void setup(void){
+	float samplingTime = ((float)SamplingTimeMicros) / 10e6;
+	currentController_init(samplingTime);
 	itHandlerInit(getMicros, itSignals, ItSignalCount);
 	lastMicros = micros();
-
 	pinMode(PwmPin, OUTPUT);
-
-	//TODO: remove
-	setCurrentController_gainI(0.02);
-	setCellCurrent(0.2);
 }
 
 void loop(void){
@@ -52,7 +49,7 @@ void loop(void){
 		return;
 	}
 	lastMicros = currentMicros;
-	currentControllerTick();
+	currentController_tick();
 	itHandlerTick();
 }
 

@@ -4,6 +4,7 @@ send("set PID 8036")
 send("reset")
 
 send("log current")
+send("log pwm")
 
 while True:
 	pass

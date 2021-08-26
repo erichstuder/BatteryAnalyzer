@@ -5,7 +5,7 @@ static inline float voltToCurrent(float volt);
 
 static float current;
 
-void cellCurrentTick(void){
+void currentMeasurement_tick(void){
 	int adcCounts = analogRead(A0);
 	float volt = countsToVolt(adcCounts);
 	current = voltToCurrent(volt);
@@ -20,6 +20,6 @@ static inline float voltToCurrent(float volt){
 	return volt / Rsens;
 }
 
-float getCellCurrent(void){
+float currentMeasurement_getCurrent(void){
 	return current;
 }
