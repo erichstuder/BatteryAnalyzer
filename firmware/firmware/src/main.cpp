@@ -17,27 +17,32 @@ static ItSignal_t itSignals[] = {
 static const unsigned char ItSignalCount = sizeof(itSignals) / sizeof(itSignals[0]);
 
 static unsigned long currentMicros;
-static unsigned long lastMicros;
-static const unsigned long SamplingTimeMicros = 0.01e6;
+static unsigned long lastAppTickMicros;
+static unsigned long lastItTickMicros;
+static const unsigned long AppSamplingTimeMicros = 0.01e6;
+static const unsigned long ItSamplingTimeMicros = 1e6;
 
 static const uint8_t PwmPin = 10;
 
 void setup(void){
 	itHandlerInit(getMicros, itSignals, ItSignalCount);
-	lastMicros = micros();
-
+	currentMicros = micros();
+	lastAppTickMicros = currentMicros;
+	lastItTickMicros = currentMicros;
 	pinMode(PwmPin, OUTPUT);
 }
 
 void loop(void){
 	currentMicros = micros();
-	if(currentMicros - lastMicros < SamplingTimeMicros){
-		return;
+	if(currentMicros - lastAppTickMicros >= AppSamplingTimeMicros){
+		lastAppTickMicros = currentMicros;
+		cellCurrentTick();
+		analogWrite(PwmPin, 204);
 	}
-	lastMicros = currentMicros;
-	cellCurrentTick();
-	analogWrite(PwmPin, 204);
-	itHandlerTick();
+	if(currentMicros - lastItTickMicros >= ItSamplingTimeMicros ){
+		lastItTickMicros = currentMicros;
+		itHandlerTick();
+	}
 }
 
 static unsigned long getMicros(void){
