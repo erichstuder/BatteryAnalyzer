@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
 
-sys.path.append('../../IT_Client-0')
+sys.path.append('../../IT_Client')
 from helpers.TelegramHandler import TelegramHandler
 from helpers.TelegramPlotter import TelegramPlotter
 
