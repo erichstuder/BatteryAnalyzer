@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import sys
-import copy
 
 sys.path.append('../../IT_Client-0')
 from helpers.TelegramHandler import TelegramHandler
@@ -27,19 +26,16 @@ print("Starting up, may take a few seconds ...")
 
 myFile = sys.argv[1]
 telegramHandler = TelegramHandler(myFile)
-plotter = TelegramPlotter()
+plotter = TelegramPlotter('myPlot')
+
 
 while True:
 	telegram = telegramHandler.getLastValue('Ki')
 	if telegram is not None:
-		print(telegram['value'])
-		print('---')
+		print('Ki ' + str(telegram['value']))
 
 	current = telegramHandler.getLastValues('current', 10e6)
 	pwm = telegramHandler.getLastValues('pwm', 10e6)
-	pwmCopy = copy.deepcopy(pwm)
-	for t in pwmCopy:
-		t['value'] = t['value'] / 100
 	plotter.plot(current)
-	plotter.plot(pwmCopy)
+	plotter.plot(pwm)
 	plotter.update()
