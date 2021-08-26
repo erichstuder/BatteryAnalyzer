@@ -3,8 +3,7 @@
 #include "currentMeasurement.h"
 
 static float samplingTime = 0.0f;
-// static float rampGain = 0.0f;
-static float iGain = 0.0f;
+static float iGain = 1000.0f;
 static float iPart = 0.0f;
 static float setCurrent = 0.0f;
 
@@ -26,12 +25,12 @@ void currentController_tick(void){
 	iPart = max(iPart, 0);
 
 	const uint8_t PwmPin = 11;
-	analogWrite(PwmPin, iPart);
+	analogWrite(PwmPin, round(iPart));
 }
 
-// void setCurrentController_rampGain(float value){
-// 	rampGain = value;
-// }
+float currentController_getIGain(void){
+	return iGain;
+}
 
 void currentController_setIGain(float value){
 	iGain = value;

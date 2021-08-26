@@ -4,6 +4,7 @@
 void currentController_init(float samplingTime);
 void currentController_setCurrent(float value);
 void currentController_tick(void);
+float currentController_getIGain(void);
 void currentController_setIGain(float value);
 float currentController_getValue(void);
 
